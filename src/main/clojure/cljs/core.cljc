@@ -620,7 +620,7 @@
   "defs name to have the root value of init iff the named var has no root value,
   else init is unevaluated"
   [x init]
-  `(when-not (exists? ~x)
+  `(when (or (false? ^boolean goog.DEBUG) (false? (exists? ~x)))
      (def ~x ~init)))
 
 (core/defn destructure [bindings]
@@ -1339,7 +1339,7 @@
              ns       (core/-> &env :ns :name)
              munge    comp/munge]
     `(do
-       (when-not (exists? ~(symbol (core/str ns) (core/str t)))
+       (when (or (false? ^boolean goog.DEBUG) (false? (exists? ~(symbol (core/str ns) (core/str t)))))
          (deftype ~t [~@locals ~meta-sym]
            IWithMeta
            (~'-with-meta [~this-sym ~meta-sym]
@@ -2663,21 +2663,161 @@
         #?(:clj (Exception. "The syntax for defmulti has changed. Example: (defmulti name dispatch-fn :default dispatch-value)")
            :cljs (js/Error. "The syntax for defmulti has changed. Example: (defmulti name dispatch-fn :default dispatch-value)"))))
     (core/let [options (apply core/hash-map options)
-               default (core/get options :default :default)]
+               default (core/get options :default :default)
+               hierarchy (core/get options :hierarchy)]
       (check-valid-options options :default :hierarchy)
-      `(defonce ~(with-meta mm-name m)
-         (let [method-table# (atom {})
-               prefer-table# (atom {})
-               method-cache# (atom {})
-               cached-hierarchy# (atom {})
-               hierarchy# (cljs.core/get ~options :hierarchy (cljs.core/get-global-hierarchy))]
-           (cljs.core/MultiFn. (cljs.core/symbol ~mm-ns ~(name mm-name)) ~dispatch-fn ~default hierarchy#
-             method-table# prefer-table# method-cache# cached-hierarchy#))))))
+      `(when (or (false? ^boolean goog.DEBUG) (false? (exists? ~mm-name)))
+         (defn ~(with-meta mm-name m)
+           ([]
+             (let [dispatch-val# (.dispatch-fn ~mm-name)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn#)))
+           ([a#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a#)))
+           ([a# b#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b#)))
+           ([a# b# c#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c#)))
+           ([a# b# c# d#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d#)))
+           ([a# b# c# d# e#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e#)))
+           ([a# b# c# d# e# f#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f#)))
+           ([a# b# c# d# e# f# g#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g#)))
+           ([a# b# c# d# e# f# g# h#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h#)))
+           ([a# b# c# d# e# f# g# h# i#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i#)))
+           ([a# b# c# d# e# f# g# h# i# j#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j#)))
+           ([a# b# c# d# e# f# g# h# i# j# k#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n# o#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s# t#]
+             (let [dispatch-val# (.dispatch-fn ~mm-name a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s# t#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s# t#)))
+           ([a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s# t# & rest#]
+             (let [dispatch-val# (apply (.-dispatch-fn ~mm-name) a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s# t# rest#)
+                   target-fn# (cljs.core/-get-method ~mm-name dispatch-val#)]
+               (when-not target-fn#
+                 (cljs.core/throw-no-method-error ~'name dispatch-val#))
+               (target-fn# a# b# c# d# e# f# g# h# i# j# k# l# m# n# o# p# q# r# s# t#))))
+         (set! (.-name ~mm-name) ~(symbol mm-ns (name mm-name)))
+         (set! (.-default-dispatch-val ~mm-name) ~default)
+         (set! (.-hierarchy ~mm-name) ~hierarchy)
+         (set! (.-dispatch-fn ~mm-name) ~dispatch-fn)
+         (set! (.-queue ~mm-name) (cljs.core/array))
+         (set! (.-method-table ~mm-name) {})
+         (set! (.-prefer-table ~mm-name) {})
+         (set! (.-method-cache ~mm-name) {})
+         (set! (.-cached-hierarchy ~mm-name) nil)))))
 
 (core/defmacro defmethod
   "Creates and installs a new method of multimethod associated with dispatch-value. "
   [multifn dispatch-val & fn-tail]
-  `(-add-method ~(with-meta multifn {:tag 'cljs.core/MultiFn}) ~dispatch-val (fn ~@fn-tail)))
+  ; Important bit: to allow dead-code elimination, use x[x.length] = ... which is a form Google Closure knows how to
+  ; dead code eliminate.
+  `(let [mfn# ~multifn]
+     (aset (.-queue mfn#) (.-length (.-queue mfn#))
+           (cljs.core/array "add-method" ~dispatch-val (fn ~@fn-tail)))))
 
 (core/defmacro time
   "Evaluates expr and prints the time it took. Returns the value of expr."
